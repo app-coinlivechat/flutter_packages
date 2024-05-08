@@ -2,8 +2,6 @@ import Flutter
 import UIKit
 import Photos
 
-
-
 public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDelegate {
 
     private let INSTAGRAM_DIRECT:String = "instagram_direct";
@@ -76,19 +74,5 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
           result(shareUtil.ERROR)
       }
   }
-    
-    public func sharer(_ sharer: Sharing, didCompleteWithResults results: [String : Any]) {
-        flutterResult(shareUtil.SUCCESS)
-     }
-     
-     public func sharer(_ sharer: Sharing, didFailWithError error: Error) {
-         flutterResult(shareUtil.ERROR)
-     }
-     
-     public func sharerDidCancel(_ sharer: Sharing) {
-         flutterResult(shareUtil.ERROR)
-     }
-    
-    
      
 }
