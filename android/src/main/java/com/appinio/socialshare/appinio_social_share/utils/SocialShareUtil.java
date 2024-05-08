@@ -41,11 +41,6 @@ public class SocialShareUtil {
     private final String TELEGRAM_PACKAGE = "org.telegram.messenger";
     private final String TIKTOK_PACKAGE = "com.zhiliaoapp.musically";
     private final String SMS_DEFAULT_APPLICATION = "sms_default_application";
-
-
-    private static CallbackManager callbackManager;
-
-
     public String shareToWhatsApp(String imagePath, String msg, Context context) {
         return shareFileAndTextToPackage(imagePath, msg, context, WHATSAPP_PACKAGE);
     }
