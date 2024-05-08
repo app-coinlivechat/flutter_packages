@@ -40,5 +40,4 @@ android {
 }
 
 dependencies {
-    implementation 'com.facebook.android:facebook-share:16.0.0'
 }

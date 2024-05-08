@@ -30,14 +30,10 @@ public class ShareUtil{
 
     
     public func getInstalledApps(result: @escaping FlutterResult){
-        let apps = [["instagram","instagram"],["facebook-stories","facebook_stories"],["whatsapp","whatsapp"],["tg","telegram"],["fb-messenger","messenger"],["tiktok","snssdk1233"],["instagram-stories","instagram_stories"],["twitter","twitter"],["sms","message"]]
+        let apps = [["instagram","instagram"],["whatsapp","whatsapp"],["tg","telegram"],["fb-messenger","messenger"],["tiktok","snssdk1233"],["instagram-stories","instagram_stories"],["twitter","twitter"],["sms","message"]]
         var output:[String: Bool] = [:]
         for app in apps {
             if(UIApplication.shared.canOpenURL(URL(string:(app[0])+"://")!)){
-                if(app[0] == "facebook-stories"){
-                    output["facebook"] = true
-
-                }
                 output[app[1]] = true
             }else{
                 output[app[1]] = false
@@ -289,36 +285,6 @@ public class ShareUtil{
         }
     }
     
-    
-    
-    func shareToFacebookPost(args : [String: Any?],result: @escaping FlutterResult, delegate: SharingDelegate) {
-        let message = args[self.argMessage] as? String
-        let imagePaths = args[self.argImagePaths] as? [String]
-        
-        let content = SharePhotoContent()
-        var photos : [SharePhoto] = []
-        for image in imagePaths! {
-            let photo = SharePhoto(image: UIImage.init(contentsOfFile: image)!, isUserGenerated: true)
-            photos.append(photo)
-        }
-        content.photos = photos
-        content.hashtag = Hashtag(message!)
-        let dialog = ShareDialog(
-            viewController: UIApplication.shared.windows.first!.rootViewController,
-            content: content,
-            delegate: delegate
-        )
-        do {
-            try dialog.validate()
-        } catch {
-           result(ERROR)
-        }
-        dialog.show()
-        result(self.SUCCESS)
-        
-    }
-    
-    
     func shareToTelegram(args : [String: Any?],result: @escaping FlutterResult) {
         let message = args[self.argMessage] as? String
         
@@ -403,68 +369,6 @@ public class ShareUtil{
         }
         result(SUCCESS)
     }
-    
-    public func shareToFacebookStory(args : [String: Any?],result: @escaping FlutterResult) {
-        let appId = args[self.argAppId] as? String
-        let imagePath = args[self.argbackgroundImage] as? String
-        let argVideoFile = args[self.argVideoFile] as? String
-        let imagePathSticker = args[self.argstickerImage] as? String
-        let backgroundTopColor = args[self.argBackgroundTopColor] as? String
-        let backgroundBottomColor =  args[self.argBackgroundBottomColor] as? String
-        let attributionURL =  args[self.argAttributionURL] as? String
-
-    
-        guard let facebookURL = URL(string: "facebook-stories://share") else {
-            result(ERROR_APP_NOT_AVAILABLE)
-            return
-        }
-        
-        
-        if (UIApplication.shared.canOpenURL(facebookURL)) {
-            var pasteboardItems = [
-                "com.facebook.sharedSticker.attributionURL": [attributionURL ?? ""],
-                "com.facebook.sharedSticker.backgroundTopColor": backgroundTopColor ?? "",
-                "com.facebook.sharedSticker.backgroundBottomColor": backgroundBottomColor ?? "",
-                "com.facebook.sharedSticker.appID": appId as Any,
-            ]
-            var backgroundImage: UIImage?;
-            if(!(imagePath==nil)){
-                backgroundImage =  UIImage.init(contentsOfFile: imagePath!)
-                if (backgroundImage != nil) {
-                     pasteboardItems["com.facebook.sharedSticker.backgroundImage"] = backgroundImage
-                 }
-            }
-            var stickerImage: UIImage?;
-            if(!(imagePathSticker==nil)){
-                stickerImage =  UIImage.init(contentsOfFile: imagePathSticker!)
-                if (stickerImage != nil) {
-                    pasteboardItems["com.facebook.sharedSticker.stickerImage"] = stickerImage
-                }
-            }
-            var backgroundVideoData:Any?;
-            if(!(argVideoFile==nil)){
-                let backgroundVideoUrl = URL(fileURLWithPath: argVideoFile!)
-                backgroundVideoData = try? Data(contentsOf: backgroundVideoUrl)
-                if (backgroundVideoData != nil) {
-                    pasteboardItems["com.facebook.sharedSticker.backgroundVideo"] = backgroundVideoData
-                }
-            }
-
-
-                if #available(iOS 10, *){
-                    let pasteboardOptions = [
-                        UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(60 * 5)
-                    ]
-                    UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
-                    UIApplication.shared.open(facebookURL, options: [:])
-                }
-                result(self.SUCCESS)
-                return
-        } else {
-            result(ERROR_APP_NOT_AVAILABLE)
-        }
-    }
-    
     
     func shareToTwitter(args : [String: Any?],result: @escaping FlutterResult) {
         let title = args[self.argMessage] as? String

@@ -168,14 +168,6 @@ Add these lines to your Info.plist file
   <key>LSApplicationQueriesSchemes</key>
   <array>
   <string>instagram</string>
-  <string>fb</string>
-  <string>fbauth2</string>
-  <string>fbshareextension</string>
-  <string>fbapi</string>
-  <string>facebook-reels</string>
-  <string>facebook-stories</string>
-  <string>fb-messenger-share-api</string>
-  <string>fb-messenger</string>
   <string>tg</string>
   <string>whatsapp</string>
   <string>twitter</string>
@@ -190,12 +182,6 @@ Add these lines to your Info.plist file
   <key>NSAppleMusicUsageDescription</key>
   <string>$(PRODUCT_NAME) requires access to play music</string>
   
-  <key>FacebookAppID</key>
-  <string>[your_facebook_app_id]</string>
-  <key>FacebookClientToken</key>
-  <string>[your_facebook_client_token]</string>
-  <key>FacebookDisplayName</key>
-  <string>[your_facebook_app_display_name]</string>
   
   <key>NSBonjourServices</key>
   <array>

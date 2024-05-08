@@ -11,9 +11,7 @@ class MethodChannelAppinioSocialShare extends AppinioSocialSharePlatform {
   final String instagramFeed = "instagram_post";
   final String instagramFeedFiles = "instagram_post_files";
   final String instagramStories = "instagram_stories";
-  final String facebook = "facebook";
   final String messenger = "messenger";
-  final String facebookStories = "facebook_stories";
   final String whatsapp = "whatsapp";
   final String whatsappAndroid = "whatsapp_android";
   final String whatsappAndroidMultiFiles = "whatsapp_android_multifiles";
@@ -247,34 +245,6 @@ class MethodChannelAppinioSocialShare extends AppinioSocialSharePlatform {
           "attributionURL": attributionURL,
           "appId": appId
         })) ??
-        "");
-  }
-
-  @override
-  Future<String> shareToFacebookStory(String appId,
-      {String? stickerImage,
-      String? backgroundImage,
-      String? backgroundVideo,
-      String? backgroundTopColor,
-      String? backgroundBottomColor,
-      String? attributionURL}) async {
-    return ((await methodChannel.invokeMethod<String>(facebookStories, {
-          "stickerImage": stickerImage,
-          "backgroundImage":
-              backgroundImage ?? (Platform.isAndroid ? backgroundVideo : null),
-          "videoFile": backgroundVideo,
-          "backgroundTopColor": backgroundTopColor,
-          "backgroundBottomColor": backgroundBottomColor,
-          "attributionURL": attributionURL,
-          "appId": appId
-        })) ??
-        "");
-  }
-
-  @override
-  Future<String> shareToFacebook(String hashtag, List<String> filePaths) async {
-    return ((await methodChannel.invokeMethod<String>(
-            facebook, {"imagePaths": filePaths, "message": hashtag})) ??
         "");
   }
 }

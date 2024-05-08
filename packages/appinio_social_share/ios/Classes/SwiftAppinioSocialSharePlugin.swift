@@ -11,8 +11,6 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
     private let INSTAGRAM_DIRECT:String = "instagram_direct";
     private let INSTAGRAM_STORIES:String = "instagram_stories";
     private let INSTAGRAM_POST:String = "instagram_post";
-    private let FACEBOOK:String = "facebook";
-    private let FACEBOOK_STORIES = "facebook_stories";
     private let MESSENGER = "messenger";
     private let WHATSAPP:String = "whatsapp";
     private let TWITTER:String = "twitter";
@@ -52,9 +50,6 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
       case INSTAGRAM_STORIES:
           shareUtil.shareToInstagramStory(args:args!,result:result)
           break
-      case FACEBOOK_STORIES:
-          shareUtil.shareToFacebookStory(args:args!,result:result)
-          break
       case WHATSAPP:
           shareUtil.shareToWhatsApp(args:args!, result:result)
           break
@@ -69,9 +64,6 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
           break
       case COPY_TO_CLIPBOARD:
           shareUtil.copyToClipboard(args: args!, result: result)
-          break
-      case FACEBOOK:
-          shareUtil.shareToFacebookPost(args:args!, result: result,delegate: self)
           break
       case TELEGRAM:
           shareUtil.shareToTelegram(args:args!, result:result)

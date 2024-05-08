@@ -17,16 +17,6 @@ import android.provider.Telephony;
 
 import androidx.core.content.FileProvider;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareHashtag;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareDialog;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,8 +33,6 @@ public class SocialShareUtil {
     public static final String ERROR_CANCELLED = "error : cancelled";
     public static final String UNKNOWN_ERROR = "unknown error";
     public static final String SUCCESS = "SUCCESS";
-
-    //packages
     private final String INSTAGRAM_PACKAGE = "com.instagram.android";
     private final String TWITTER_PACKAGE = "com.twitter.android";
     private final String INSTAGRAM_STORY_PACKAGE = "com.instagram.share.ADD_TO_STORY";
@@ -52,11 +40,6 @@ public class SocialShareUtil {
     private final String WHATSAPP_PACKAGE = "com.whatsapp";
     private final String TELEGRAM_PACKAGE = "org.telegram.messenger";
     private final String TIKTOK_PACKAGE = "com.zhiliaoapp.musically";
-    private final String FACEBOOK_STORY_PACKAGE = "com.facebook.stories.ADD_TO_STORY";
-    private final String FACEBOOK_PACKAGE = "com.facebook.katana";
-    private final String FACEBOOK_LITE_PACKAGE = "com.facebook.lite";
-    private final String FACEBOOK_MESSENGER_PACKAGE = "com.facebook.orca";
-    private final String FACEBOOK_MESSENGER_LITE_PACKAGE = "com.facebook.mlite";
     private final String SMS_DEFAULT_APPLICATION = "sms_default_application";
 
 
@@ -103,21 +86,6 @@ public class SocialShareUtil {
     public String shareToTelegramFiles(ArrayList<String> imagePaths, Context activity) {
         return shareFilesToPackage(imagePaths, activity, TELEGRAM_PACKAGE);
     }
-
-
-    public String shareToMessenger(String text, Context activity) {
-        Map<String, Boolean> apps = getInstalledApps(activity);
-        String packageName;
-        if (apps.get("messenger")) {
-            packageName = FACEBOOK_MESSENGER_PACKAGE;
-        } else if (apps.get("messenger-lite")) {
-            packageName = FACEBOOK_MESSENGER_LITE_PACKAGE;
-        } else {
-            return ERROR_APP_NOT_AVAILABLE;
-        }
-        return shareTextToPackage(text, activity, packageName);
-    }
-
 
     public String copyToClipBoard(String content, Context activity) {
         try {
@@ -237,85 +205,6 @@ public class SocialShareUtil {
 
     }
 
-
-    public void shareToFacebook(List<String> filePaths, String text, Activity activity, MethodChannel.Result result) {
-        FacebookSdk.fullyInitialize();
-        FacebookSdk.setApplicationId(getFacebookAppId(activity));
-        callbackManager = callbackManager == null ? CallbackManager.Factory.create() : callbackManager;
-        ShareDialog shareDialog = new ShareDialog(activity);
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result1) {
-                System.out.println("---------------onSuccess");
-                result.success(SUCCESS);
-            }
-
-            @Override
-            public void onCancel() {
-                result.success(ERROR_CANCELLED);
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                System.out.println("---------------onError");
-                result.success(error.getLocalizedMessage());
-            }
-        });
-        List<SharePhoto> sharePhotos = new ArrayList<>();
-        for (int i = 0; i < filePaths.size(); i++) {
-            Uri fileUri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".provider", new File(filePaths.get(i)));
-            sharePhotos.add(new SharePhoto.Builder().setImageUrl(fileUri).build());
-        }
-        SharePhotoContent content = new SharePhotoContent.Builder()
-                .setShareHashtag(new ShareHashtag.Builder().setHashtag(text).build())
-                .setPhotos(sharePhotos)
-                .build();
-        if (ShareDialog.canShow(SharePhotoContent.class)) {
-            shareDialog.show(content);
-        }
-    }
-
-    public String shareToFaceBookStory(String appId, String stickerImage, String backgroundImage, String backgroundTopColor, String backgroundBottomColor, String attributionURL, Context activity) {
-        try {
-            Map<String, Boolean> apps = getInstalledApps(activity);
-            String packageName;
-            if (apps.get("facebook")) {
-                packageName = FACEBOOK_PACKAGE;
-            } else if (apps.get("facebook-lite")) {
-                packageName = FACEBOOK_LITE_PACKAGE;
-            } else {
-                return ERROR_APP_NOT_AVAILABLE;
-            }
-
-            Intent intent = new Intent(FACEBOOK_STORY_PACKAGE);
-
-
-            intent.setType("image/*");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId);
-            if (stickerImage != null) {
-                File file = new File(stickerImage);
-                Uri stickerImageFile = FileProvider.getUriForFile(activity, activity.getPackageName() + ".provider", file);
-                intent.putExtra("interactive_asset_uri", stickerImageFile);
-                activity.grantUriPermission(packageName, stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
-            intent.putExtra("content_url", attributionURL);
-            intent.putExtra("top_background_color", backgroundTopColor);
-            intent.putExtra("bottom_background_color", backgroundBottomColor);
-            if (backgroundImage != null) {
-                File file1 = new File(backgroundImage);
-                Uri backgroundImageUri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".provider", file1);
-                intent.setDataAndType(backgroundImageUri, getMimeTypeOfFile(backgroundImage));
-                activity.grantUriPermission(packageName, backgroundImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
-            activity.startActivity(intent);
-            return SUCCESS;
-        } catch (Exception e) {
-            return e.getLocalizedMessage();
-        }
-    }
-
     private String shareTextToPackage(
             String text,
             Context context,
@@ -330,7 +219,6 @@ public class SocialShareUtil {
             intent.putExtra("content_url", text);
             intent.putExtra("source_application", context.getPackageName());
             intent.putExtra(Intent.EXTRA_TITLE, text);
-            intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", getFacebookAppId(context));
             intent.setPackage(packageName);
             context.startActivity(intent);
             return SUCCESS;
@@ -393,13 +281,8 @@ public class SocialShareUtil {
     public Map<String, Boolean> getInstalledApps(Context context) {
         Map<String, String> appsMap = new HashMap();
         appsMap.put("instagram", INSTAGRAM_PACKAGE);
-        appsMap.put("facebook_stories", FACEBOOK_PACKAGE);
         appsMap.put("whatsapp", WHATSAPP_PACKAGE);
         appsMap.put("telegram", TELEGRAM_PACKAGE);
-        appsMap.put("messenger", FACEBOOK_MESSENGER_PACKAGE);
-        appsMap.put("messenger-lite", FACEBOOK_MESSENGER_LITE_PACKAGE);
-        appsMap.put("facebook", FACEBOOK_PACKAGE);
-        appsMap.put("facebook-lite", FACEBOOK_LITE_PACKAGE);
         appsMap.put("instagram_stories", INSTAGRAM_PACKAGE);
         appsMap.put("twitter", TWITTER_PACKAGE);
         appsMap.put("tiktok", TIKTOK_PACKAGE);
@@ -413,7 +296,7 @@ public class SocialShareUtil {
         intent.setData(Uri.parse("sms:"));
         List<ResolveInfo> resolvedActivities = pm.queryIntentActivities(intent, 0);
         apps.put("message", !resolvedActivities.isEmpty());
-        String[] appNames = {"instagram", "facebook_stories", "whatsapp", "telegram", "messenger", "facebook", "facebook-lite", "messenger-lite", "instagram_stories", "twitter", "tiktok"};
+        String[] appNames = {"instagram", "whatsapp", "telegram", "messenger", "messenger-lite", "instagram_stories", "twitter", "tiktok"};
 
         for (int i = 0; i < appNames.length; i++) {
             try {
@@ -438,25 +321,6 @@ public class SocialShareUtil {
         } catch (Exception e) {
             return "";
         }
-    }
-
-
-    String getFacebookAppId(Context activity) {
-        String appId = "";
-        try {
-            ApplicationInfo appInfo = activity.getPackageManager().getApplicationInfo(
-                    activity.getPackageName(), PackageManager.GET_META_DATA);
-
-            Bundle metaData = appInfo.metaData;
-            if (metaData != null) {
-                appId = metaData.getString("com.facebook.sdk.ApplicationId");
-                Log.d("FB_APP_ID", appId);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            // Handle the exception if needed
-        }
-
-        return appId;
     }
 
 }

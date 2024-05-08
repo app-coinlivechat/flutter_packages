@@ -29,9 +29,8 @@ public class AppinioSocialSharePlugin implements FlutterPlugin, MethodCallHandle
     private final String INSTAGRAM_FEED = "instagram_post";
     private final String INSTAGRAM_FEED_FILES = "instagram_post_files";
     private final String INSTAGRAM_STORIES = "instagram_stories";
-    private final String FACEBOOK = "facebook";
+
     private final String MESSENGER = "messenger";
-    private final String FACEBOOK_STORIES = "facebook_stories";
     private final String WHATSAPP_ANDROID = "whatsapp_android";
     private final String WHATSAPP_ANDROID_MULTIFILES = "whatsapp_android_multifiles";
     private final String TWITTER_ANDROID = "twitter_android";
@@ -99,14 +98,8 @@ public class AppinioSocialSharePlugin implements FlutterPlugin, MethodCallHandle
                 return socialShareUtil.shareToInstagramFeedFiles(imagePaths, activeContext,message);
             case INSTAGRAM_STORIES:
                 return socialShareUtil.shareToInstagramStory(appId, stickerImage, backgroundImage, backgroundTopColor, backgroundBottomColor, attributionURL, activeContext);
-            case FACEBOOK_STORIES:
-                return socialShareUtil.shareToFaceBookStory(appId, stickerImage, backgroundImage, backgroundTopColor, backgroundBottomColor, attributionURL, activeContext);
             case MESSENGER:
                 return socialShareUtil.shareToMessenger(message, activeContext);
-            case FACEBOOK:
-                if (activity == null) return SocialShareUtil.UNKNOWN_ERROR;
-                socialShareUtil.shareToFacebook(imagePaths, message, activity, result);
-                return null;
             case WHATSAPP_ANDROID:
                 return socialShareUtil.shareToWhatsApp(imagePath, message, activeContext);
             case WHATSAPP_ANDROID_MULTIFILES:
